@@ -1,0 +1,91 @@
+{
+  "info": {
+    "name": "Guía Práctica S4 - API REST",
+    "description": "Pruebas de los endpoints de empleados y resultados del test de Weill.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "empleadoId", "value": "1" },
+    { "key": "resultadoWeillId", "value": "1" }
+  ],
+  "item": [
+    {
+      "name": "Empleados",
+      "item": [
+        {
+          "name": "1 - Registrar empleado (201)",
+          "event": [{
+            "listen": "test",
+            "script": { "exec": [
+              "pm.test('Estado 201', () => pm.response.to.have.status(201));",
+              "pm.collectionVariables.set('empleadoId', pm.response.json().id);"
+            ]}
+          }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"nombres\": \"Ana María\",\n  \"apellidos\": \"López Pérez\",\n  \"cargo\": \"Analista de sistemas\",\n  \"salario\": 18500.00\n}" },
+            "url": "{{baseUrl}}/api/empleados"
+          }
+        },
+        { "name": "2 - Listar empleados (200)", "request": { "method": "GET", "url": "{{baseUrl}}/api/empleados" } },
+        { "name": "3 - Buscar empleado (200)", "request": { "method": "GET", "url": "{{baseUrl}}/api/empleados/{{empleadoId}}" } },
+        {
+          "name": "4 - Actualizar empleado (200)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"nombres\": \"Ana María\",\n  \"apellidos\": \"López Pérez\",\n  \"cargo\": \"Arquitecta de software\",\n  \"salario\": 22000.00\n}" },
+            "url": "{{baseUrl}}/api/empleados/{{empleadoId}}"
+          }
+        },
+        { "name": "5 - Eliminar empleado (200)", "request": { "method": "DELETE", "url": "{{baseUrl}}/api/empleados/{{empleadoId}}" } },
+        {
+          "name": "6 - Validación de empleado (400)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"nombres\": \"\",\n  \"apellidos\": \"Pérez\",\n  \"cargo\": \"\",\n  \"salario\": 0\n}" },
+            "url": "{{baseUrl}}/api/empleados"
+          }
+        },
+        { "name": "7 - Empleado inexistente (404)", "request": { "method": "GET", "url": "{{baseUrl}}/api/empleados/999999" } }
+      ]
+    },
+    {
+      "name": "Resultados Weill",
+      "item": [
+        {
+          "name": "1 - Registrar resultado (201)",
+          "event": [{
+            "listen": "test",
+            "script": { "exec": [
+              "pm.test('Estado 201', () => pm.response.to.have.status(201));",
+              "pm.collectionVariables.set('resultadoWeillId', pm.response.json().id);"
+            ]}
+          }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"nombreParticipante\": \"Carlos Martínez\",\n  \"edad\": 21,\n  \"puntaje\": 78,\n  \"clasificacion\": \"Superior al promedio\",\n  \"fechaRealizacion\": \"2024-06-15\"\n}" },
+            "url": "{{baseUrl}}/api/resultados-weill"
+          }
+        },
+        { "name": "2 - Listar resultados (200)", "request": { "method": "GET", "url": "{{baseUrl}}/api/resultados-weill" } },
+        { "name": "3 - Buscar resultado (200)", "request": { "method": "GET", "url": "{{baseUrl}}/api/resultados-weill/{{resultadoWeillId}}" } },
+        {
+          "name": "4 - Actualizar resultado (200)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"nombreParticipante\": \"Carlos Martínez\",\n  \"edad\": 21,\n  \"puntaje\": 82,\n  \"clasificacion\": \"Superior\",\n  \"fechaRealizacion\": \"2024-06-15\"\n}" },
+            "url": "{{baseUrl}}/api/resultados-weill/{{resultadoWeillId}}"
+          }
+        },
+        { "name": "5 - Eliminar resultado (200)", "request": { "method": "DELETE", "url": "{{baseUrl}}/api/resultados-weill/{{resultadoWeillId}}" } },
+        { "name": "6 - Resultado inexistente (404)", "request": { "method": "GET", "url": "{{baseUrl}}/api/resultados-weill/999999" } }
+      ]
+    }
+  ]
+}
