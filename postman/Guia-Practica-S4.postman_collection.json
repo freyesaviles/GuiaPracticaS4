@@ -84,7 +84,16 @@
           }
         },
         { "name": "5 - Eliminar resultado (200)", "request": { "method": "DELETE", "url": "{{baseUrl}}/api/resultados-weill/{{resultadoWeillId}}" } },
-        { "name": "6 - Resultado inexistente (404)", "request": { "method": "GET", "url": "{{baseUrl}}/api/resultados-weill/999999" } }
+        {
+          "name": "6 - Validación de resultado Weill (400)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"nombreParticipante\": \"\",\n  \"edad\": 4,\n  \"puntaje\": 110,\n  \"clasificacion\": \"\",\n  \"fechaRealizacion\": \"2999-01-01\"\n}" },
+            "url": "{{baseUrl}}/api/resultados-weill"
+          }
+        },
+        { "name": "7 - Resultado inexistente (404)", "request": { "method": "GET", "url": "{{baseUrl}}/api/resultados-weill/999999" } }
       ]
     }
   ]

@@ -77,19 +77,132 @@ El modelo posee seis atributos contando el identificador. Valida que el nombre y
 1. Inicie la aplicación.
 2. Abra Postman y seleccione **Import**.
 3. Importe `postman/Guia-Practica-S4.postman_collection.json`.
-4. Ejecute primero la petición de registro de cada carpeta. La colección guarda automáticamente el identificador recibido.
-5. Ejecute las demás peticiones en el orden indicado y capture la pestaña de respuesta mostrando el método, la ruta, el código HTTP y el JSON.
+4. Compruebe que la variable `baseUrl` tenga el valor `http://localhost:8080`.
+5. Ejecute las peticiones de cada carpeta en el orden indicado. El primer `POST` guarda automáticamente el identificador recibido para las siguientes peticiones.
+6. En cada evidencia capture el nombre y método de la solicitud, la URL, el código HTTP y el cuerpo JSON de la respuesta.
 
-Conviene tomar como mínimo estas evidencias:
+### Pruebas del ejercicio: empleados
 
-- `GET` de la lista: `200 OK`.
-- `POST` válido: `201 Created`.
-- `PUT` válido: `200 OK`.
-- `DELETE` válido: `200 OK`.
-- `POST` inválido: `400 Bad Request`.
-- `GET` con el identificador `999999`: `404 Not Found`.
+Ejecute estas pruebas en el orden indicado:
 
-El JSON inválido de empleados responde con `400` porque los nombres y el cargo incumplen `@NotBlank`, y el salario `0` incumple `@DecimalMin`, que exige un valor mayor que cero. `GlobalExceptionHandler` reúne estas faltas y las devuelve como un objeto JSON con estado, mensaje y errores por campo.
+| N.º | Método y ruta | Datos o propósito | Código esperado |
+| --- | --- | --- | --- |
+| 1 | `POST /api/empleados` | Registrar a Ana María con el JSON válido | `201 Created` |
+| 2 | `GET /api/empleados` | Comprobar que el registro aparece en la lista | `200 OK` |
+| 3 | `GET /api/empleados/{{empleadoId}}` | Consultar el empleado recién creado | `200 OK` |
+| 4 | `PUT /api/empleados/{{empleadoId}}` | Cambiar cargo y salario | `200 OK` |
+| 5 | `DELETE /api/empleados/{{empleadoId}}` | Eliminar el registro | `200 OK` |
+| 6 | `POST /api/empleados` | Enviar nombres y cargo vacíos, y salario `0` | `400 Bad Request` |
+| 7 | `GET /api/empleados/999999` | Buscar un identificador inexistente | `404 Not Found` |
+
+JSON de la prueba 1:
+
+```json
+{
+  "nombres": "Ana María",
+  "apellidos": "López Pérez",
+  "cargo": "Analista de sistemas",
+  "salario": 18500.00
+}
+```
+
+JSON de la prueba 4:
+
+```json
+{
+  "nombres": "Ana María",
+  "apellidos": "López Pérez",
+  "cargo": "Arquitecta de software",
+  "salario": 22000.00
+}
+```
+
+JSON inválido de la prueba 6:
+
+```json
+{
+  "nombres": "",
+  "apellidos": "Pérez",
+  "cargo": "",
+  "salario": 0
+}
+```
+
+La última solicitud debe producir una respuesta semejante a esta:
+
+```json
+{
+  "estado": 400,
+  "mensaje": "Los datos enviados no son válidos",
+  "errores": {
+    "nombres": "Los nombres son obligatorios",
+    "cargo": "El cargo es obligatorio",
+    "salario": "El salario debe ser mayor que 0"
+  }
+}
+```
+
+Responde con `400` porque los nombres y el cargo incumplen `@NotBlank`, y el salario `0` incumple `@DecimalMin`. El orden de los campos dentro de `errores` puede variar sin afectar el resultado.
+
+### Pruebas de la actividad 8: resultados Weill
+
+Ejecute también estas pruebas en orden:
+
+| N.º | Método y ruta | Datos o propósito | Código esperado |
+| --- | --- | --- | --- |
+| 1 | `POST /api/resultados-weill` | Registrar un resultado válido | `201 Created` |
+| 2 | `GET /api/resultados-weill` | Comprobar que aparece en la lista | `200 OK` |
+| 3 | `GET /api/resultados-weill/{{resultadoWeillId}}` | Consultar el resultado creado | `200 OK` |
+| 4 | `PUT /api/resultados-weill/{{resultadoWeillId}}` | Actualizar puntaje y clasificación | `200 OK` |
+| 5 | `DELETE /api/resultados-weill/{{resultadoWeillId}}` | Eliminar el resultado | `200 OK` |
+| 6 | `POST /api/resultados-weill` | Enviar un resultado que incumple las validaciones | `400 Bad Request` |
+| 7 | `GET /api/resultados-weill/999999` | Buscar un resultado inexistente | `404 Not Found` |
+
+JSON de la prueba 1:
+
+```json
+{
+  "nombreParticipante": "Carlos Martínez",
+  "edad": 21,
+  "puntaje": 78,
+  "clasificacion": "Superior al promedio",
+  "fechaRealizacion": "2024-06-15"
+}
+```
+
+JSON de la prueba 4:
+
+```json
+{
+  "nombreParticipante": "Carlos Martínez",
+  "edad": 21,
+  "puntaje": 82,
+  "clasificacion": "Superior",
+  "fechaRealizacion": "2024-06-15"
+}
+```
+
+JSON inválido de la prueba 6:
+
+```json
+{
+  "nombreParticipante": "",
+  "edad": 4,
+  "puntaje": 110,
+  "clasificacion": "",
+  "fechaRealizacion": "2999-01-01"
+}
+```
+
+Esta prueba debe responder con `400` y mostrar errores para `nombreParticipante`, `edad`, `puntaje`, `clasificacion` y `fechaRealizacion`. La prueba 7 debe responder:
+
+```json
+{
+  "mensaje": "Resultado Weill no encontrado"
+}
+```
+
+Al terminar habrá evidencia de los cinco endpoints de cada caso y de los códigos HTTP `200`, `201`, `400` y `404` solicitados en la guía.
 
 ## Preguntas de cierre
 
